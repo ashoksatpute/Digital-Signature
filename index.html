@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signature Pad</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f2f2f2;
+    }
+    #signatureCanvas {
+        border: 2px solid #000;
+        background-color: #fff;
+        margin-bottom: 20px;
+        width: 600px; /* Adjusted width */
+        height: 300px; /* Adjusted height */
+    }
+    #buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button#resetBtn {
+        background-color: #dc3545; /* Red */
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    #copyright {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+    }
+</style>
+</head>
+<body>
+    <canvas id="signatureCanvas" width="600" height="300"></canvas>
+    <div id="buttons">
+        <button id="resetBtn">Reset</button>
+        <button id="downloadBtn">Download Signature</button>
+    </div>
+    <div id="copyright">
+        &copy; 2024 Ashok Satpute
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var canvas = document.getElementById("signatureCanvas");
+            var ctx = canvas.getContext("2d");
+            var drawing = false;
+            var lastX = 0;
+            var lastY = 0;
+
+            canvas.addEventListener("mousedown", function(e) {
+                drawing = true;
+                lastX = e.clientX - canvas.offsetLeft;
+                lastY = e.clientY - canvas.offsetTop;
+            });
+
+            canvas.addEventListener("touchstart", function(e) {
+                drawing = true;
+                lastX = e.touches[0].clientX - canvas.offsetLeft;
+                lastY = e.touches[0].clientY - canvas.offsetTop;
+            });
+
+            canvas.addEventListener("mousemove", function(e) {
+                if (drawing) {
+                    var mouseX = e.clientX - canvas.offsetLeft;
+                    var mouseY = e.clientY - canvas.offsetTop;
+
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(mouseX, mouseY);
+                    ctx.strokeStyle = "#000";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    lastX = mouseX;
+                    lastY = mouseY;
+                }
+            });
+
+            canvas.addEventListener("touchmove", function(e) {
+                e.preventDefault();
+                if (drawing) {
+                    var mouseX = e.touches[0].clientX - canvas.offsetLeft;
+                    var mouseY = e.touches[0].clientY - canvas.offsetTop;
+
+                    ctx.beginPath();
+                    ctx.moveTo(lastX, lastY);
+                    ctx.lineTo(mouseX, mouseY);
+                    ctx.strokeStyle = "#000";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    lastX = mouseX;
+                    lastY = mouseY;
+                }
+            });
+
+            function stopDrawing() {
+                drawing = false;
+            }
+
+            canvas.addEventListener("mouseup", stopDrawing);
+            canvas.addEventListener("mouseleave", stopDrawing);
+            canvas.addEventListener("touchend", stopDrawing);
+
+            document.getElementById("downloadBtn").addEventListener("click", function() {
+                var downloadLink = document.createElement("a");
+                downloadLink.setAttribute("download", "signature.png");
+                downloadLink.setAttribute("href", canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+                downloadLink.click();
+            });
+
+            document.getElementById("resetBtn").addEventListener("click", function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            });
+        });
+    </script>
+</body>
+</html>
