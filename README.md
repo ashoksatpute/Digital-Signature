@@ -1,5 +1,4 @@
 # Digital-Signature
-Signature Canvas App
 Welcome to the Signature Canvas App! This application allows users to create and download their signatures using a simple drawing interface.
 
 Features
